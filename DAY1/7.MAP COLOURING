@@ -1,0 +1,63 @@
+# Function to check if the current color assignment is valid
+def is_valid(graph, node, color, color_assignment):
+    for neighbor in graph[node]:
+        if color_assignment[neighbor] == color:
+            return False
+    return True
+
+# Backtracking function to solve the CSP (Map Coloring)
+def map_coloring(graph, colors, color_assignment, node):
+    # If all nodes are colored, return True
+    if node == len(graph):
+        return True
+    
+    # Get the node to color
+    node_name = list(graph.keys())[node]
+    
+    # Try assigning each color to the current node
+    for color in colors:
+        if is_valid(graph, node_name, color, color_assignment):
+            # Assign the color
+            color_assignment[node_name] = color
+            
+            # Recursively assign colors to the next node
+            if map_coloring(graph, colors, color_assignment, node + 1):
+                return True
+            
+            # Backtrack if no valid color found
+            color_assignment[node_name] = None
+    
+    return False
+
+# Function to solve the Map Coloring problem
+def solve_map_coloring(graph, colors):
+    # Initialize color assignment dictionary with None (no color)
+    color_assignment = {node: None for node in graph}
+    
+    # Start backtracking from the first node
+    if map_coloring(graph, colors, color_assignment, 0):
+        return color_assignment
+    else:
+        return None
+
+# Example graph (map)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C', 'D'],
+    'C': ['A', 'B', 'D', 'E'],
+    'D': ['B', 'C', 'E'],
+    'E': ['C', 'D']
+}
+
+# List of available colors
+colors = ['Red', 'Green', 'Blue']
+
+# Solving the map coloring problem
+solution = solve_map_coloring(graph, colors)
+
+if solution:
+    print("Solution found:")
+    for region, color in solution.items():
+        print(f"Region {region} => {color}")
+else:
+    print("No solution found.")
